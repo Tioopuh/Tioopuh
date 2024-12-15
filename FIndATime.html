@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Team Schedule Input</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F3F4F6;
+            padding: 20px;
+            margin: 0;
+        }
+        h2 {
+            color: #000;
+        }
+        button {
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #005EA6;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #DADCE0;
+            font-size: 14px;
+        }
+        th {
+            background-color: #EDEDED;
+        }
+        tr:nth-child(even) {
+            background-color: #F9F9F9;
+        }
+        select, .time-input {
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h2>Select your available times for the week</h2>
+    <div id="schedule">
+        <!-- Schedule will be generated here -->
+    </div>
+    <button onclick="addAvailability()">Add Another Timeframe</button>
+    <button onclick="generateCSV()">Download Availability</button>
+
+    <script>
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const times = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'];
+
+        function addAvailability() {
+            const scheduleContainer = document.getElementById('schedule');
+            const availabilityDiv = document.createElement('div');
+            availabilityDiv.className = 'availability';
+
+            let availabilityHTML = `<select class="day-select">`;
+            daysOfWeek.forEach(day => {
+                availabilityHTML += `<option value="${day}">${day}</option>`;
+            });
+            availabilityHTML += `</select>`;
+            availabilityHTML += `<select class="time-select">`;
+            times.forEach(time => {
+                availabilityHTML += `<option value="${time}">${time}</option>`;
+            });
+            availabilityHTML += `</select>`;
+
+            availabilityDiv.innerHTML = availabilityHTML;
+            scheduleContainer.appendChild(availabilityDiv);
+        }
+
+        function generateCSV() {
+            const availabilities = document.querySelectorAll('.availability');
+            let csvContent = "data:text/csv;charset=utf-8,Day,Time\n";
+
+            availabilities.forEach(availability => {
+                const day = availability.querySelector('.day-select').value;
+                const time = availability.querySelector('.time-select').value;
+                csvContent += `${day},${time}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "my_availability.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initially add one availability option
+        addAvailability();
+    </script>
+</body>
+</html>
+
+
